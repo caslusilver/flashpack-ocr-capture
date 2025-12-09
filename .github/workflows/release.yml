@@ -11,62 +11,63 @@ jobs:
 
     steps:
 
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Read plugin version from main plugin file
-      id: get_version
-      run: |
-        PLUGIN_FILE=$(grep -rl "Plugin Name:" --include="*.php" .)
-        echo "Plugin file found: $PLUGIN_FILE"
+      - name: Read plugin version from main plugin file
+        id: get_version
+        run: |
+          PLUGIN_FILE=$(grep -rl "Plugin Name:" --include="*.php" .)
+          echo "Plugin file found: $PLUGIN_FILE"
 
-        VERSION=$(grep -i "Version:" "$PLUGIN_FILE" | head -n 1 | awk -F': ' '{print $2}' | tr -d '\r')
-        echo "Detected version: $VERSION"
+          VERSION=$(grep -i "Version:" "$PLUGIN_FILE" | head -n 1 | awk -F': ' '{print $2}' | tr -d '\r')
+          echo "Detected version: $VERSION"
 
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "plugin_file=$PLUGIN_FILE" >> $GITHUB_OUTPUT
 
-    - name: Create tag
-      id: tag_creation
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const version = process.env.VERSION;
-          const tag = `v${version}`;
+      - name: Create tag
+        id: tag_creation
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = process.env.VERSION;
+            const tag = `v${version}`;
 
-          try {
-            await github.rest.git.getRef({
+            try {
+              await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tag}`
+              });
+              core.setOutput("tag_exists", "true");
+              console.log(`Tag ${tag} já existe. Pulando criação.`);
+              return;
+            } catch (e) {
+              console.log(`Tag ${tag} não existe. Criando...`);
+            }
+
+            await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: `tags/${tag}`
+              ref: `refs/tags/${tag}`,
+              sha: context.sha
             });
-            core.setOutput("tag_exists", "true");
-            console.log(`Tag ${tag} já existe. Pulando criação.`);
-            return;
-          } catch (e) {
-            console.log(`Tag ${tag} não existe. Criando...`);
-          }
 
-          await github.rest.git.createRef({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: `refs/tags/${tag}`,
-            sha: context.sha
-          });
-
-          console.log(`Tag ${tag} criada com sucesso.`);
+            console.log(`Tag ${tag} criada com sucesso.`);
         env:
           VERSION: ${{ steps.get_version.outputs.version }}
 
-    - name: Create GitHub Release
-      if: steps.tag_creation.outputs.tag_exists != 'true'
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: v${{ steps.get_version.outputs.version }}
-        name: "Release v${{ steps.get_version.outputs.version }}"
-        body: |
-          🚀 **Release automática do plugin WordPress**
-          - Versão: v${{ steps.get_version.outputs.version }}
-          - Arquivo principal detectado: `${{ steps.get_version.outputs.plugin_file }}`
-          
-          Esta release foi gerada automaticamente após um push na branch **main**.
+      - name: Create GitHub Release
+        if: steps.tag_creation.outputs.tag_exists != 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: "Release v${{ steps.get_version.outputs.version }}"
+          body: |
+            🚀 **Release automática do plugin WordPress**
+
+            **Versão detectada:** v${{ steps.get_version.outputs.version }}
+            **Arquivo principal:** `${{ steps.get_version.outputs.plugin_file }}`
+
+            Esta release foi gerada automaticamente após um push na branch **main**.
