@@ -1,0 +1,34 @@
+#ocr-modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+#ocr-modal {
+    background: #ffffff;
+    padding: 18px;
+    width: 92%;
+    max-width: 420px;
+    border-radius: 14px;
+    color: #000;
+    font-family: sans-serif;
+}
+
+#ocr-modal h3,
+#ocr-modal label {
+    color: #000 !important;
+}
+
+#ocr-modal input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    color: #000;
+}
