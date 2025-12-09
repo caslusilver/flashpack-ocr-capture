@@ -3,7 +3,7 @@
  * Plugin Name: FlashPack OCR Capture
  * Plugin URI: https://github.com/caslusilver/flashpack-ocr-capture
  * Description: Captura de imagem com molduras, crop assistido e envio ao webhook com OCR.
- * Version: 0.4.5
+ * Version: 0.4.7
  * Author: Lucas Andrade
  * Author URI: https://github.com/caslusilver
  * License: GPL2
@@ -59,3 +59,5 @@ add_action('wp_enqueue_scripts', function () {
  * Load shortcode
  */
 require_once plugin_dir_path(__FILE__) . 'inc/shortcode.php';
+require_once __DIR__ . '/inc/admin-refresh-cache.php';
+
