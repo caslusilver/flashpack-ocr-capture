@@ -2,15 +2,17 @@
 /**
  * Plugin Name: FlashPack OCR Capture
  * Plugin URI: https://github.com/caslusilver/flashpack-ocr-capture
- * GitHub Plugin URI: https://github.com/caslusilver/flashpack-ocr-capture
- * Primary Branch: main
- * Description: Captura de imagem com molduras, crop automático, envio ao webhook e modal de confirmação. Ideal para OCR de etiquetas em condomínios.
+ * Description: Captura de imagem com molduras, crop assistido e envio ao webhook com OCR.
  * Version: 0.4.2
  * Author: Lucas Andrade
  * Author URI: https://github.com/caslusilver
  * License: GPL2
  * Text Domain: flashpack-ocr-capture
+ *
+ * GitHub Plugin URI: caslusilver/flashpack-ocr-capture
+ * Primary Branch: main
  */
+
 
 
 if (!defined('ABSPATH')) exit;
